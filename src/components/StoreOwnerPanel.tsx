@@ -56,7 +56,7 @@ export function StoreOwnerPanel() {
 
           if (data.type?.includes('WhitelistedStore')) {
             if (data.content?.dataType === 'moveObject') {
-              const fields = data.content.fields;
+              const fields = data.content.fields as any;
               foundStoreName = fields.store_name || fields.storeName || 'Unknown Store';
             }
           }
