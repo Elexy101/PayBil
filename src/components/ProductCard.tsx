@@ -9,7 +9,7 @@ import { OnChainProduct } from '@/lib/products';
 
 export interface ProductCardProps {
   product: OnChainProduct;
-  priceUsdc: number; // Price in USDC (atomic units - 6 decimals)
+  priceUsdc?: number; // Price in USDC (atomic units - 6 decimals)
 }
 
 export function formatProductPrice(priceUsdc: number): string {
