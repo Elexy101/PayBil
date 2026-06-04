@@ -196,7 +196,7 @@ function LiveStats() {
           if (!data) continue;
           if (data.type?.includes('CustomerVaultWithSubs')) {
             if (data.content?.dataType === 'moveObject') {
-              const fields = data.content.fields;
+              const fields = data.content.fields as any;
               const vault = fields.vault?.fields || fields.vault || {};
               setVaultData({
                 balance: (vault.balance?.value || vault.balance || 0) / 1_000_000,
