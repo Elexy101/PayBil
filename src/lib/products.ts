@@ -84,7 +84,7 @@ export async function getAllProducts(client: SuiClient): Promise<OnChainProduct[
 
     if (!catalog.data || !catalog.data.content) return products;
 
-    const fields = catalog.data.content.fields as any;
+    const fields = (catalog.data.content as any).fields;  
     const productIds = fields.products || [];
 
     // Fetch each product
