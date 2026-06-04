@@ -16,7 +16,7 @@ export function formatProductPrice(priceUsdc: number): string {
   return (priceUsdc / 1_000_000).toFixed(2);
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priceUsdc }: ProductCardProps) {  
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
