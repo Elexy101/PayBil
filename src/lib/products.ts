@@ -124,7 +124,7 @@ export async function getWhitelistedStores(client: SuiClient): Promise<OnChainSt
 
     if (!registry.data || !registry.data.content) return stores;
 
-    const fields = registry.data.content.fields;
+    const fields = (registry.data.content as any).fields; 
     const storeList = fields.store_list || [];
 
     for (const storeId of storeList) {
