@@ -196,7 +196,7 @@ function LiveStats() {
           if (!data) continue;
           if (data.type?.includes('CustomerVaultWithSubs')) {
             if (data.content?.dataType === 'moveObject') {
-              const fields = data.content.fields as any;
+              const fields = data.content.fields;
               const vault = fields.vault?.fields || fields.vault || {};
               setVaultData({
                 balance: (vault.balance?.value || vault.balance || 0) / 1_000_000,
@@ -240,6 +240,42 @@ function LiveStats() {
 
 function AIBrief() {
   const account = useCurrentAccount();
+  const client = useSuiClient();
+  const [budgetUsed, setBudgetUsed] = useState(0);
+
+  useEffect(() => {
+    async function fetchAIData() {
+      if (!account) return;
+
+      try {
+        const vaults = await client.getOwnedObjects({
+          owner: account.address,
+          options: { showContent: true, showType: true },
+        });
+
+        for (const obj of vaults.data || []) {
+          const data = obj.data;
+          if (!data) continue;
+          if (data.type?.includes('CustomerVaultWithSubs')) {
+            if (data.content?.dataType === 'moveObject') {
+              const fields = data.content.fields as any;
+              const vault = fields.vault?.fields || fields.vault || {};
+              const budget = vault.weekly_budget || vault.weeklyBudget || 0;
+              const spent = vault.spent_this_week || vault.spentThisWeek || 0;
+              if (budget > 0) {
+                setBudgetUsed(Math.round((spent / budget) * 100));
+              }
+              break;
+            }
+          }
+        }
+      } catch (err) {
+        console.error('AIBrief error:', err);
+      }
+    }
+
+    fetchAIData();
+  }, [account?.address, client]);
 
   return (
     <div className="glass-card p-6 border border-purple-500/20">
@@ -254,15 +290,11 @@ function AIBrief() {
       </div>
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
-          <span className="text-white/60">Tasks Today</span>
-          <span className="text-white">0</span>
-        </div>
-        <div className="flex justify-between text-sm">
           <span className="text-white/60">Budget Used</span>
-          <span className="text-cyan-400">0%</span>
+          <span className="text-cyan-400">{budgetUsed}%</span>
         </div>
         <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-[0%] bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full" />
+          <div className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full" style={{ width: `${budgetUsed}%` }} />
         </div>
         <div className="pt-3 border-t border-white/10">
           <div className="flex items-center gap-2 text-xs text-cyan-400">
